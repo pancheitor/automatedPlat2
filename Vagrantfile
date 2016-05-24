@@ -8,10 +8,45 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
+# Servidor storage1
+ config.vm.define "storage1" do |jn|
+    jn.vm.box = "trusty64"
+    jn.vm.network "private_network", ip: "192.168.50.2"
+    jn.vm.hostname = "storage1"
+    jn.vm.provider "virtualbox" do |v|
+      v.name = "storage1"
+    end
 
-# Servidor webserver
-  config.vm.provision "shell", inline: "echo Provisionando maquinas..."
+    jn.vm.provision "puppet" do |puppet|
+        puppet.manifests_path = "puppet/manifests"
+        puppet.manifest_file = "storage1.pp"
+        puppet.options = [
+          '--verbose',
+          '--debug',
+        ]
+    end
+  end
 
+config.vm.define "storage2" do |jn|
+    jn.vm.box = "trusty64"
+    jn.vm.network "private_network", ip: "192.168.50.3"
+    jn.vm.hostname = "storage2"
+    jn.vm.provider "virtualbox" do |v|
+      v.name = "storage2"
+    end
+
+    jn.vm.provision "puppet" do |puppet|
+        puppet.manifests_path = "puppet/manifests"
+        puppet.manifest_file = "storage2.pp"
+        puppet.options = [
+          '--verbose',
+          '--debug',
+        ]
+    end
+  end
+
+
+#Servidor webserver
   config.vm.define "web1" do |web1|
     web1.vm.box = "trusty64"
     web1.vm.network "private_network", ip: "192.168.50.4"
@@ -39,6 +74,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     db1.vm.provision "puppet" do |puppet|
         puppet.manifests_path = "puppet/manifests"
         puppet.manifest_file = "db.pp"
+        puppet.module_path = "manifests/modules"
         puppet.options = [
           '--verbose',
           '--debug',
@@ -50,13 +86,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
  config.vm.define "jn" do |jn|
     jn.vm.box = "trusty64"
     jn.vm.network "private_network", ip: "192.168.50.8"
+    jn.vm.hostname = "jenkins"
+    jn.vm.network :forwarded_port, guest: 8080, host: 81
     jn.vm.provider "virtualbox" do |v|
       v.name = "jn"
+      v.memory = 1024
     end
 
     jn.vm.provision "puppet" do |puppet|
         puppet.manifests_path = "puppet/manifests"
         puppet.manifest_file = "jenkins.pp"
+        puppet.module_path = "puppet/manifests/modules"
         puppet.options = [
           '--verbose',
           '--debug',
