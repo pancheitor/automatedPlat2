@@ -8,6 +8,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
+
+#Servidor loadbalancer
+  config.vm.define "lb" do |lb|
+    lb.vm.box = "trusty64"
+    lb.vm.network "private_network", ip: "192.168.50.15"
+    lb.vm.hostname = "lb"
+    lb.vm.network :forwarded_port, guest: 80, host: 80
+    lb.vm.provider "virtualbox" do |v|
+      v.name = "lb"
+    end
+    lb.vm.provision "puppet" do |puppet|
+        puppet.manifests_path = "puppet/manifests"
+        puppet.manifest_file = "lb.pp"
+        puppet.module_path = "puppet/modules"
+        puppet.options = [
+          '--verbose',
+          '--debug',
+        ]
+    end
+  end
+
+
+
 # Servidor storage1
  config.vm.define "storage1" do |jn|
     jn.vm.box = "trusty64"
@@ -20,6 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     jn.vm.provision "puppet" do |puppet|
         puppet.manifests_path = "puppet/manifests"
         puppet.manifest_file = "storage1.pp"
+        puppet.module_path = "puppet/modules"
         puppet.options = [
           '--verbose',
           '--debug',
@@ -38,6 +62,7 @@ config.vm.define "storage2" do |jn|
     jn.vm.provision "puppet" do |puppet|
         puppet.manifests_path = "puppet/manifests"
         puppet.manifest_file = "storage2.pp"
+        puppet.module_path = "puppet/modules"
         puppet.options = [
           '--verbose',
           '--debug',
@@ -46,16 +71,36 @@ config.vm.define "storage2" do |jn|
   end
 
 
-#Servidor webserver
+#Servidor webserver2
   config.vm.define "web1" do |web1|
     web1.vm.box = "trusty64"
     web1.vm.network "private_network", ip: "192.168.50.4"
+    web1.vm.hostname = "web1"
     web1.vm.provider "virtualbox" do |v|
       v.name = "web1"
     end
     web1.vm.provision "puppet" do |puppet|
         puppet.manifests_path = "puppet/manifests"
         puppet.manifest_file = "webserver.pp"
+        puppet.module_path = "puppet/modules"
+        puppet.options = [
+          '--verbose',
+          '--debug',
+        ]
+    end
+  end
+#Servidor webserver1
+  config.vm.define "web2" do |web1|
+    web1.vm.box = "trusty64"
+    web1.vm.network "private_network", ip: "192.168.50.5"
+    web1.vm.hostname = "web2"
+    web1.vm.provider "virtualbox" do |v|
+      v.name = "web2"
+    end
+    web1.vm.provision "puppet" do |puppet|
+        puppet.manifests_path = "puppet/manifests"
+        puppet.manifest_file = "webserver.pp"
+        puppet.module_path = "puppet/modules"
         puppet.options = [
           '--verbose',
           '--debug',

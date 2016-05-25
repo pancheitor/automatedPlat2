@@ -2,8 +2,11 @@
 192.168.50.2 storage1
 192.168.50.3 storage2
 192.168.50.4 webserver1
+192.168.50.5 webserver2
 192.168.50.6 db1
 192.168.50.8 jenkins
+192.168.50.15 lb
+
 
 
 # The following lines are desirable for IPv6 capable hosts

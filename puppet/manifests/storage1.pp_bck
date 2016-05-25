@@ -1,0 +1,48 @@
+exec { "sources":
+    command => "/usr/bin/add-apt-repository -y ppa:gluster/glusterfs-3.5",
+}
+
+exec { "update":
+    command => "/usr/bin/apt-get update;/bin/cp /vagrant/configfiles/hosts /etc/hosts",
+    require => Exec['sources']
+}
+
+#package { 'python-software-properties': ensure => 'installed' }
+#package { 'software-properties-common': ensure => 'installed' }
+#package { 'glusterfs-server': ensure => 'installed' }
+#package { 'nfs-common': ensure => 'installed' }
+#package { 'nfs-kernel-server': ensure => 'installed' }
+
+class { '::gluster::server':
+  shorewall => true,
+}
+
+gluster::host { 'storage1':
+  uuid => '1f660ca2-2c78-4aa0-8f4d-21608218c69c',
+}
+
+gluster::brick { 'storage1:/data/brick1':
+  areyousure => true,
+}
+
+gluster::host { 'storage2':
+
+}
+
+gluster::brick { 'storage2:/data/brick2':
+  areyousure => true,
+}
+
+$brick_list = [
+  'storage1:/data/brick1',
+  'storage2:/data/brick2',
+]
+
+gluster::volume { 'gv0':
+  replica => 2,
+  bricks => $brick_list,
+}
+#exec { "modprobe":
+#    require => Package['nfs-common','nfs-kernel-server','glusterfs-server'],
+#    command => "/sbin/modprobe nfs; /bin/rm -rf /data; /bin/mkdir /data; /bin/mkdir /data/brick1; /bin/mkdir /data/brick1/gv0; cp /vagrant/configfiles/hosts /etc/hosts"
+#}

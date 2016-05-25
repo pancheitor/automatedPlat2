@@ -1,18 +1,20 @@
-exec { "sources":
-    command => "/usr/bin/add-apt-repository -y ppa:gluster/glusterfs-3.5",
+exec { "hosts":
+    command => "/bin/cp /vagrant/configfiles/hosts /etc/hosts; /bin/rm -rf /vagrant/data/brick1; /bin/mkdir /vagrant/data/brick1"
 }
 
-exec { "update":
-    command => "/usr/bin/apt-get update;/bin/cp /vagrant/configfiles/hosts /etc/hosts",
-    require => Exec['sources']
+class { 'gluster':
+  package_ensure => 'latest',
+  service_ensure => 'running',
 }
 
-exec { "installs":
-    require => Exec['update'],
-    command => "/usr/bin/apt-get install -y python-software-properties software-properties-common glusterfs-server nfs-common nfs-kernel-server"
+gluster_peer { ['storage1','storage2']:
+  ensure => present,
 }
 
-exec { "modprobe":
-    require => Exec['installs'],
-    command => "/sbin/modprobe nfs; /bin/rm -rf /data; /bin/mkdir /data; /bin/mkdir /data/brick1; /bin/mkdir /data/brick1/gv0; cp /vagrant/configfiles/hosts /etc/hosts"
+gluster_volume { 'volume1':
+  replica => 2,
+  bricks => [
+    'storage1:/vagrant/data/brick1',
+    'storage2:/vagrant/data/brick2',
+  ],
 }
