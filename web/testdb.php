@@ -3,7 +3,7 @@
 # $ php -f db-connect-test.php
 $dbname = 'mysql';
 $dbuser = 'root';
-$dbpass = '123456';
+$dbpass = '1234';
 $dbhost = '192.168.50.6';
 $connect = mysql_connect($dbhost, $dbuser, $dbpass) or die("Unable to Connect to '$dbhost'");
 mysql_select_db($dbname) or die("Could not open the db '$dbname'");

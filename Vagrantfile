@@ -112,6 +112,7 @@ config.vm.define "storage2" do |jn|
  config.vm.define "db1" do |db1|
     db1.vm.box = "trusty64"
     db1.vm.network "private_network", ip: "192.168.50.6"
+    db1.vm.hostname = "db1"
     db1.vm.provider "virtualbox" do |v|
       v.name = "db1"
     end
@@ -119,7 +120,7 @@ config.vm.define "storage2" do |jn|
     db1.vm.provision "puppet" do |puppet|
         puppet.manifests_path = "puppet/manifests"
         puppet.manifest_file = "db.pp"
-        puppet.module_path = "manifests/modules"
+        puppet.module_path = "puppet/modules"
         puppet.options = [
           '--verbose',
           '--debug',

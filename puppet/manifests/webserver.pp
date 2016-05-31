@@ -10,31 +10,25 @@ package { "glusterfs-client":
 # Lista de paquetes de PHP para instalar
 $packages = [
     "php5",
-    "php5-cli",
     "php5-mysql",
-    "php5-dev",
-    "php5-curl",
-    "php-apc",
-    "libapache2-mod-php5"
+    "php5-mcrypt",
+    "libapache2-mod-php5",
+    "mysql-client"
 ]
+
+package { "apache2":
+    ensure => present,
+    require => Exec["apt-get update"]
+}
  
 # Instalación de los paquetes de PHP
 package { $packages:
     ensure => present,
     require => Exec["apt-get update"],
-    notify => Service["apache2"]
+    notify => Package["apache2"]
 }
 
 exec { "mount":
     require => Package["glusterfs-client"],
     command => "/bin/cp /vagrant/configfiles/hosts /etc/hosts;/bin/cp -R /vagrant/web/* /var/www/html/"
-}
-
-node default {
-  include apache
-
-  apache::vhost {'site_test':
-    port  => 80,
-    docroot => '/vagrant/web',
-  }
 }

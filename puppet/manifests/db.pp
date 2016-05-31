@@ -21,3 +21,8 @@ exec { "set-mysql-root-password":
     require => Service["mysql"],
     path => "/bin:/usr/bin",
 }
+# Agregar usuario web (Recomiendo que si es produccion no sea root)
+exec { "set-mysql-user":
+    command => "mysql -uroot -p1234 -e\"CREATE USER 'root'@'192.168.50.4' IDENTIFIED BY '1234'\"; GRANT ALL on *.* TO 'root'@'192.168.50.4'; flush privileges;",
+    path => "/bin:/usr/bin",
+}
