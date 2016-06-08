@@ -134,6 +134,7 @@ config.vm.define "storage2" do |jn|
     jn.vm.network "private_network", ip: "192.168.50.8"
     jn.vm.hostname = "jenkins"
     jn.vm.network :forwarded_port, guest: 8080, host: 81
+    jn.vm.network :forwarded_port, guest: 8886, host: 8886
     jn.vm.provider "virtualbox" do |v|
       v.name = "jn"
       v.memory = 1024

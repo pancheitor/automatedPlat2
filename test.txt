@@ -1,4 +1,9 @@
 prueba1 >> test.txt
 
 prueba2
+<<<<<<< HEAD
 prueba5
+=======
+prueba3
+prueba4
+>>>>>>> new-feature
